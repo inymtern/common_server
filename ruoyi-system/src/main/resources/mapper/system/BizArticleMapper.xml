@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.BizArticleMapper">
+    
+    <resultMap type="BizArticle" id="BizArticleResult">
+        <result property="id"    column="id"    />
+        <result property="name"    column="name"    />
+        <result property="text"    column="text"    />
+        <result property="isUse"    column="is_use"    />
+        <result property="keyStr"    column="key_str"    />
+        <result property="useTime"    column="use_time"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectBizArticleVo">
+        select id, name, text, is_use, key_str, use_time, create_time from biz_article
+    </sql>
+
+    <select id="selectBizArticleList" parameterType="BizArticle" resultMap="BizArticleResult">
+        <include refid="selectBizArticleVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="text != null  and text != ''"> and text = #{text}</if>
+            <if test="isUse != null "> and is_use = #{isUse}</if>
+            <if test="keyStr != null  and keyStr != ''"> and key_str = #{keyStr}</if>
+            <if test="useTime != null "> and use_time = #{useTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizArticleById" parameterType="Long" resultMap="BizArticleResult">
+        <include refid="selectBizArticleVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizArticle" parameterType="BizArticle" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_article
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="text != null">text,</if>
+            <if test="isUse != null">is_use,</if>
+            <if test="keyStr != null">key_str,</if>
+            <if test="useTime != null">use_time,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="text != null">#{text},</if>
+            <if test="isUse != null">#{isUse},</if>
+            <if test="keyStr != null">#{keyStr},</if>
+            <if test="useTime != null">#{useTime},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizArticle" parameterType="BizArticle">
+        update biz_article
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="text != null">text = #{text},</if>
+            <if test="isUse != null">is_use = #{isUse},</if>
+            <if test="keyStr != null">key_str = #{keyStr},</if>
+            <if test="useTime != null">use_time = #{useTime},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizArticleById" parameterType="Long">
+        delete from biz_article where id = #{id}
+    </delete>
+
+    <delete id="deleteBizArticleByIds" parameterType="String">
+        delete from biz_article where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

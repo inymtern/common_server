@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.BizVideoMapper">
+    
+    <resultMap type="BizVideo" id="BizVideoResult">
+        <result property="id"    column="id"    />
+        <result property="videoPath"    column="video_path"    />
+        <result property="articleId"    column="article_id"    />
+        <result property="title"    column="title"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectBizVideoVo">
+        select id, video_path, article_id, title, create_time from biz_video
+    </sql>
+
+    <select id="selectBizVideoList" parameterType="BizVideo" resultMap="BizVideoResult">
+        <include refid="selectBizVideoVo"/>
+        <where>  
+            <if test="videoPath != null  and videoPath != ''"> and video_path = #{videoPath}</if>
+            <if test="articleId != null "> and article_id = #{articleId}</if>
+            <if test="title != null  and title != ''"> and title = #{title}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizVideoById" parameterType="Long" resultMap="BizVideoResult">
+        <include refid="selectBizVideoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizVideo" parameterType="BizVideo" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_video
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="videoPath != null">video_path,</if>
+            <if test="articleId != null">article_id,</if>
+            <if test="title != null">title,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="videoPath != null">#{videoPath},</if>
+            <if test="articleId != null">#{articleId},</if>
+            <if test="title != null">#{title},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizVideo" parameterType="BizVideo">
+        update biz_video
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="videoPath != null">video_path = #{videoPath},</if>
+            <if test="articleId != null">article_id = #{articleId},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizVideoById" parameterType="Long">
+        delete from biz_video where id = #{id}
+    </delete>
+
+    <delete id="deleteBizVideoByIds" parameterType="String">
+        delete from biz_video where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>

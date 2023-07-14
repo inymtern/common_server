@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.system.mapper.BizUploadMapper">
+    
+    <resultMap type="BizUpload" id="BizUploadResult">
+        <result property="id"    column="id"    />
+        <result property="fileName"    column="file_name"    />
+        <result property="fileLink"    column="file_link"    />
+        <result property="createTime"    column="create_time"    />
+    </resultMap>
+
+    <sql id="selectBizUploadVo">
+        select id, file_name, file_link, create_time from biz_upload
+    </sql>
+
+    <select id="selectBizUploadList" parameterType="BizUpload" resultMap="BizUploadResult">
+        <include refid="selectBizUploadVo"/>
+        <where>
+            <if test="fileName != null  and fileName != ''"> and file_name like concat('%', #{fileName}, '%')</if>
+            <if test="fileLink != null  and fileLink != ''"> and file_link = #{fileLink}</if>
+        </where>
+    </select>
+    
+    <select id="selectBizUploadById" parameterType="Long" resultMap="BizUploadResult">
+        <include refid="selectBizUploadVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBizUpload" parameterType="BizUpload" useGeneratedKeys="true" keyProperty="id">
+        insert into biz_upload
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="fileName != null">file_name,</if>
+            <if test="fileLink != null">file_link,</if>
+            <if test="createTime != null">create_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="fileName != null">#{fileName},</if>
+            <if test="fileLink != null">#{fileLink},</if>
+            <if test="createTime != null">#{createTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBizUpload" parameterType="BizUpload">
+        update biz_upload
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fileName != null">file_name = #{fileName},</if>
+            <if test="fileLink != null">file_link = #{fileLink},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBizUploadById" parameterType="Long">
+        delete from biz_upload where id = #{id}
+    </delete>
+
+    <delete id="deleteBizUploadByIds" parameterType="String">
+        delete from biz_upload where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
